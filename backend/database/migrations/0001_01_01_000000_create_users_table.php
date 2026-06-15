@@ -22,6 +22,8 @@ return new class extends Migration
             $table->unsignedInteger('total_wins')->default(0);
             $table->unsignedInteger('total_losses')->default(0);
 
+            $table->boolean('is_admin')->default(false);
+
             $table->rememberToken();
             $table->timestamps();
         });

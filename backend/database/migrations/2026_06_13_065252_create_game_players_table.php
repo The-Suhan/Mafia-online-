@@ -20,14 +20,11 @@ return new class extends Migration
                 'doctor',
                 // Mafia takımı
                 'godfather',
-                'silencer',
                 // Köy takımı
                 'vigilante',
                 'mayor',
                 'bodyguard',
-                'spy',
                 'jester',
-                'executioner',
             ]);
             $table->boolean('is_alive')->default(true);
             $table->unsignedTinyInteger('self_heal_used')->default(0);
