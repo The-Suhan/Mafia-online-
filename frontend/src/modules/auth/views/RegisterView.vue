@@ -1,4 +1,4 @@
-<template>
+  <template>
   <main class="register-page">
     <!-- Atmospheric noir backdrop -->
     <div class="register-page__backdrop register-page__backdrop--glow" aria-hidden="true" />

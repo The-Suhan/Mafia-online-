@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import api from '@/shared/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user  = ref(null)
+  const user = ref(null)
   const token = ref(localStorage.getItem('auth_token') || null)
 
   // ── Register ──────────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
     const { data } = await api.post('/register', payload)
 
     token.value = data.token
-    user.value  = data.user
+    user.value = data.user
     localStorage.setItem('auth_token', data.token)
 
     return data
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
     const { data } = await api.post('/login', payload)
 
     token.value = data.token
-    user.value  = data.user
+    user.value = data.user
     localStorage.setItem('auth_token', data.token)
 
     return data
@@ -38,10 +38,17 @@ export const useAuthStore = defineStore('auth', () => {
       // swallow — clear local state regardless
     } finally {
       token.value = null
-      user.value  = null
+      user.value = null
       localStorage.removeItem('auth_token')
     }
   }
 
-  return { user, token, register, login, logout }
+  // ── Forgot Password ───────────────────────────────────────────────────────
+  async function forgotPassword(payload) {
+    // payload: { email }
+    const { data } = await api.post('/forgot-password', payload)
+    return data
+  }
+
+  return { user, token, register, login, logout, forgotPassword }
 })
