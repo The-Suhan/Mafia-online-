@@ -248,18 +248,14 @@ function formatXp(value) {
 <style lang="scss" scoped>
 // NOTE ON TOKENS
 // ---------------------------------------------------------------------
-// This file is written against `@/shared/styles/_variables.scss` and
-// `@/shared/styles/_mixins.scss`, which weren't included in the prompt.
-// The token names below are assumptions based on naming conventions —
-// rename them to match your actual variables if they differ:
-//   $color-bg, $color-bg-elevated, $color-bg-secondary, $color-bg-accent,
-//   $color-border, $color-primary, $color-text, $color-text-muted,
-//   $radius-md, $radius-lg, $breakpoint-sm, $breakpoint-lg, $font-mono
+// Matched against the real `_variables.scss`: $color-bg, $color-card,
+// $color-secondary, $color-accent, $color-border, $color-primary,
+// $color-text, $color-text-muted, $radius-md, $radius-lg, $font-mono.
 //
-// If your variables are exposed as plain CSS custom properties (e.g.
-// `--color-primary`) rather than real Sass variables, `rgba($color-primary, .15)`
-// below won't compile — switch those calls to `rgba(var(--color-primary-rgb), .15)`
-// or equivalent, depending on how your tokens are defined.
+// `_variables.scss` has no breakpoint variables, so the media queries
+// below use plain pixel values (640px / 1024px, the usual Tailwind sm/lg
+// cutoffs) instead. If `_mixins.scss` exposes a breakpoint mixin, swap
+// these `@media (min-width: …)` blocks for it.
 @use '@/shared/styles/variables' as *;
 @use '@/shared/styles/mixins' as *;
 
@@ -330,7 +326,7 @@ function formatXp(value) {
         margin: 0 auto;
         padding: 3rem 1.25rem 4rem;
 
-        @media (min-width: $breakpoint-sm) {
+        @media (min-width: 640px) {
             padding-top: 4rem;
             padding-bottom: 4rem;
         }
@@ -366,7 +362,7 @@ function formatXp(value) {
         letter-spacing: -0.01em;
         line-height: 1.1;
 
-        @media (min-width: $breakpoint-sm) {
+        @media (min-width: 640px) {
             font-size: 3rem;
         }
     }
@@ -412,18 +408,18 @@ function formatXp(value) {
         padding: 0;
         margin: 0;
 
-        @media (min-width: $breakpoint-sm) {
+        @media (min-width: 640px) {
             grid-template-columns: repeat(2, 1fr);
         }
 
-        @media (min-width: $breakpoint-lg) {
+        @media (min-width: 1024px) {
             grid-template-columns: repeat(3, 1fr);
         }
     }
 
     &__role-card {
         border: 1px solid $color-border;
-        background: $color-bg-elevated;
+        background: $color-card;
         border-radius: $radius-lg;
         padding: 1.25rem;
         transition: border-color 0.2s ease;
@@ -460,13 +456,13 @@ function formatXp(value) {
         }
 
         &--village {
-            background: $color-bg-secondary;
+            background: $color-secondary;
             color: $color-text;
             box-shadow: 0 0 0 1px $color-border inset;
         }
 
         &--neutral {
-            background: $color-bg-accent;
+            background: $color-accent;
             color: $color-text;
             box-shadow: 0 0 0 1px $color-border inset;
         }
@@ -545,7 +541,7 @@ function formatXp(value) {
     &__flow-step-content {
         flex: 1;
         border: 1px solid $color-border;
-        background: $color-bg-elevated;
+        background: $color-card;
         border-radius: $radius-lg;
         padding: 1rem 1.25rem;
     }
@@ -562,14 +558,14 @@ function formatXp(value) {
         grid-template-columns: 1fr;
         gap: 1rem;
 
-        @media (min-width: $breakpoint-sm) {
+        @media (min-width: 640px) {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
     &__win-card {
         border: 1px solid $color-border;
-        background: $color-bg-elevated;
+        background: $color-card;
         border-radius: $radius-lg;
         padding: 1.5rem;
 
@@ -586,7 +582,7 @@ function formatXp(value) {
         width: 48px;
         height: 48px;
         border-radius: $radius-md;
-        background: $color-bg-secondary;
+        background: $color-secondary;
         color: $color-text;
         box-shadow: 0 0 0 1px $color-border inset;
 
@@ -618,7 +614,7 @@ function formatXp(value) {
     // Ranks
     &__ranks-card {
         border: 1px solid $color-border;
-        background: $color-bg-elevated;
+        background: $color-card;
         border-radius: $radius-lg;
         padding: 1.5rem;
     }
@@ -627,7 +623,7 @@ function formatXp(value) {
         position: relative;
         height: 8px;
         border-radius: 999px;
-        background: $color-bg-secondary;
+        background: $color-secondary;
         margin-bottom: 2rem;
     }
 
@@ -653,7 +649,7 @@ function formatXp(value) {
         width: 14px;
         height: 14px;
         border-radius: 999px;
-        border: 2px solid $color-bg-elevated;
+        border: 2px solid $color-card;
         background: $color-primary;
     }
 
@@ -665,7 +661,7 @@ function formatXp(value) {
         grid-template-columns: repeat(3, 1fr);
         gap: 1rem;
 
-        @media (min-width: $breakpoint-sm) {
+        @media (min-width: 640px) {
             grid-template-columns: repeat(6, 1fr);
         }
     }

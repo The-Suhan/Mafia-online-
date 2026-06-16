@@ -3,7 +3,7 @@ import { useAuthStore } from '@/modules/auth/store'
 import homeRoutes from '@/modules/home/routes'
 import profileRoutes from '@/modules/profile/routes'
 import authRoutes from '@/modules/auth/routes'
-// ── Import other module routes here as the project grows ──────
+import staticRoutes from '@/modules/static/routes'  // ← ekle
 // import roomRoutes from '@/modules/room/routes'
 // import adminRoutes from '@/modules/admin/routes'
 
@@ -11,7 +11,6 @@ const routes = [
   ...homeRoutes,
   ...authRoutes,
   ...profileRoutes,
-  // ── Add other module routes here ──────────────────────────
   // ...roomRoutes,
   // ...adminRoutes,
 
@@ -27,13 +26,10 @@ const routes = [
         next('/login')
       }
     },
-    component: { template: '<div></div>' }, 
+    component: { template: '<div></div>' },
   },
-  // Fallback
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/',
-  },
+
+  ...staticRoutes,  
 ]
 
 const router = createRouter({
@@ -42,19 +38,14 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
 })
 
-// ── Navigation guard ──────────────────────────────────────────
 router.beforeEach((to, from, next) => {
-  // Pinia store must be accessed inside the guard (after createPinia is called)
   const auth = useAuthStore()
-
   if (to.meta.requiresAuth && !auth.token) {
     return next({ name: 'login', query: { redirect: to.fullPath } })
   }
-
   if (to.meta.guestOnly && auth.token) {
     return next('/')
   }
-
   next()
 })
 
