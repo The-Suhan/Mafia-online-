@@ -5,7 +5,7 @@
 
         <!-- Navbar -->
         <header class="home-page__navbar">
-            <span class="home-page__navbar-logo">MAF<span class="home-page__navbar-logo--accent">IA</span></span>
+            <span class="home-page__navbar-logo">MAF<span class="home-page__navbar-logo--destructive">IA</span></span>
             <nav class="home-page__navbar-right">
                 <RouterLink v-if="authStore.user?.is_admin" to="/admin" class="home-page__admin-link">
                     Admin Panel
@@ -29,7 +29,7 @@
             <!-- Hero -->
             <section class="home-page__hero">
                 <span class="home-page__eyebrow">Social Deduction</span>
-                <h1 class="home-page__title">MAF<span class="home-page__title--accent">IA</span></h1>
+                <h1 class="home-page__title">MAF<span class="home-page__title--destructive">IA</span></h1>
                 <p class="home-page__subtitle">Trust no one. Find the mafia before they find you.</p>
             </section>
 
@@ -249,7 +249,7 @@ async function handleCreate() {
         letter-spacing: 0.1em;
         color: $color-text;
 
-        &--accent {
+        &--destructive {
             color: $color-primary;
         }
     }
@@ -368,7 +368,7 @@ async function handleCreate() {
         color: $color-text;
         margin: 0;
 
-        &--accent {
+        &--destructive {
             color: $color-primary;
         }
     }
