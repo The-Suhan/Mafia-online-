@@ -5,15 +5,16 @@
 
         <div class="not-found__tape not-found__tape--top" aria-hidden="true">
             <div class="not-found__tape-track">
-                <span v-for="i in 12" :key="`tape-top-${i}`" class="not-found__tape-text">
+                <span v-for="i in 20" :key="`tape-top-${i}`" class="not-found__tape-text">
                     CRIME SCENE &mdash; DO NOT CROSS
                     <span class="not-found__tape-star">★</span>
                 </span>
             </div>
         </div>
+
         <div class="not-found__tape not-found__tape--bottom" aria-hidden="true">
-            <div class="not-found__tape-track">
-                <span v-for="i in 12" :key="`tape-bottom-${i}`" class="not-found__tape-text">
+            <div class="not-found__tape-track not-found__tape-track--reverse">
+                <span v-for="i in 20" :key="`tape-bottom-${i}`" class="not-found__tape-text">
                     UNSOLVED &mdash; STAY BACK
                     <span class="not-found__tape-star">★</span>
                 </span>
@@ -124,6 +125,16 @@ function goHome() {
 @use '@/shared/styles/variables' as *;
 @use '@/shared/styles/mixins' as *;
 
+@keyframes tape-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
 .not-found {
     position: relative;
     display: flex;
@@ -136,6 +147,39 @@ function goHome() {
     color: $color-text;
     padding: 4rem 1.5rem;
     text-align: center;
+
+    &__tape {
+        position: absolute;
+        left: 0;
+        z-index: 1;
+        width: 200%;
+        overflow: hidden;
+        pointer-events: none;
+        background: #e3b505;
+        padding: 0.5rem 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.4);
+
+        &--top {
+            top: 14%;
+            transform: rotate(-4deg);
+        }
+
+        &--bottom {
+            bottom: 10%;
+            transform: rotate(3deg);
+        }
+    }
+
+    &__tape-track {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        animation: tape-scroll 18s linear infinite;
+
+        &--reverse {
+            animation-direction: reverse;
+        }
+    }
 
     &__vignette {
         position: absolute;
