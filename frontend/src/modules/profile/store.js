@@ -97,5 +97,38 @@ export const useProfileStore = defineStore('profile', {
                 this.recentGames = []
             }
         },
+
+        // ── New: update profile (nickname + optional avatar) ─────────────────
+        async updateProfile(payload) {
+            // payload: FormData containing 'nickname' and optionally 'avatar' (File)
+            const { data } = await api.patch('/profile', payload, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            })
+
+            // Keep local profile state in sync
+            if (this.profile) {
+                Object.assign(this.profile, data.user ?? data)
+            }
+
+            // Also sync auth store user so navbar/avatar updates immediately
+            try {
+                const { useAuthStore } = await import('@/modules/auth/store')
+                const authStore = useAuthStore()
+                if (authStore.user) {
+                    Object.assign(authStore.user, data.user ?? data)
+                }
+            } catch {
+                // auth store is optional dependency — silently ignore if unavailable
+            }
+
+            return data
+        },
+
+        // ── New: change password ─────────────────────────────────────────────
+        async updatePassword(payload) {
+            // payload: { current_password, password, password_confirmation }
+            const { data } = await api.put('/profile/password', payload)
+            return data
+        },
     },
 })
