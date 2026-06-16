@@ -1,12 +1,45 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import authRoutes from '../modules/auth/routes'
+import { useAuthStore } from '@/modules/auth/store'
+import homeRoutes from '@/modules/home/routes'
+import authRoutes from '@/modules/auth/routes'
+// ── Import other module routes here as the project grows ──────
+// import roomRoutes from '@/modules/room/routes'
+// import adminRoutes from '@/modules/admin/routes'
 
 const routes = [
+  ...homeRoutes,
   ...authRoutes,
-  { path: '/', redirect: '/login' }, 
+  // ── Add other module routes here ──────────────────────────
+  // ...roomRoutes,
+  // ...adminRoutes,
+
+  // Fallback
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/',
+  },
 ]
 
-export default createRouter({
-  history: createWebHistory(),
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior: () => ({ top: 0 }),
 })
+
+// ── Navigation guard ──────────────────────────────────────────
+router.beforeEach((to, from, next) => {
+  // Pinia store must be accessed inside the guard (after createPinia is called)
+  const auth = useAuthStore()
+
+  if (to.meta.requiresAuth && !auth.token) {
+    return next({ name: 'login', query: { redirect: to.fullPath } })
+  }
+
+  if (to.meta.guestOnly && auth.token) {
+    return next('/')
+  }
+
+  next()
+})
+
+export default router
