@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import api from '@/shared/services/api'
 
 const USERS_PAGE_SIZE = 20
+const MATCHES_PAGE_SIZE = 20
 
 export const useAdminStore = defineStore('admin', {
     state: () => ({
@@ -30,6 +31,25 @@ export const useAdminStore = defineStore('admin', {
         // --- Aksiyon durumları (UI'da spinner/disable göstermek için) ---
         banActionLoading: false,
         xpActionLoading: false,
+
+        // --- Match History (liste sayfası) ---
+        matches: [],
+        matchesTotal: 0,
+        matchesPage: 1,
+        matchesPageSize: MATCHES_PAGE_SIZE,
+        matchesLoading: false,
+        matchesError: null,
+
+        // --- Match Detail (admin/history-match/:id sayfası) ---
+        selectedMatch: null,
+        selectedMatchLoading: false,
+        selectedMatchError: null,
+
+        matchPlayers: [],
+
+        matchLogs: [],
+        matchLogsLoading: false,
+        matchLogsError: null,
     }),
 
     getters: {
@@ -41,6 +61,9 @@ export const useAdminStore = defineStore('admin', {
             if (!user || !user.total_games) return 0
             return Math.round((user.wins / user.total_games) * 100)
         },
+
+        matchesTotalPages: (state) =>
+            Math.max(1, Math.ceil(state.matchesTotal / state.matchesPageSize)),
     },
 
     actions: {
@@ -192,6 +215,86 @@ export const useAdminStore = defineStore('admin', {
             this.selectedUserGames = []
             this.selectedUserError = null
             this.selectedUserGamesError = null
+        },
+
+        /**
+         * Maç geçmişini sayfalı olarak getirir.
+         * GET /api/admin/sessions?page=&status=&date_from=&date_to=
+         * @param {{page?: number, status?: string, dateFrom?: string, dateTo?: string}} payload
+         */
+        async fetchMatches({ page = 1, status = 'all', dateFrom = '', dateTo = '' } = {}) {
+            this.matchesLoading = true
+            this.matchesError = null
+            try {
+                const { data } = await api.get('/api/admin/sessions', {
+                    params: {
+                        page,
+                        status: status && status !== 'all' ? status : undefined,
+                        date_from: dateFrom || undefined,
+                        date_to: dateTo || undefined,
+                    },
+                })
+
+                // Farklı API response şekillerine tolerans:
+                // { items, total, page } veya { data, meta: { total, current_page } }
+                this.matches = data.items ?? data.data ?? []
+                this.matchesTotal = data.total ?? data.meta?.total ?? 0
+                this.matchesPage = data.page ?? data.meta?.current_page ?? page
+            } catch (err) {
+                this.matchesError = err?.response?.data?.message || 'Failed to load matches'
+            } finally {
+                this.matchesLoading = false
+            }
+        },
+
+        /**
+         * Maç detayını getirir (admin/history-match/:id sayfası).
+         * GET /api/admin/sessions/{id}
+         * Beklenen response: { id, roomName, winner, totalPlayers, totalRounds,
+         *   duration, startedAt, endedAt, players: [...] }
+         */
+        async fetchMatch(id) {
+            this.selectedMatchLoading = true
+            this.selectedMatchError = null
+            try {
+                const { data } = await api.get(`/api/admin/sessions/${id}`)
+                this.selectedMatch = data
+                this.matchPlayers = data?.players ?? []
+                return data
+            } catch (err) {
+                this.selectedMatchError = err?.response?.data?.message || 'Maç bulunamadı'
+                throw err
+            } finally {
+                this.selectedMatchLoading = false
+            }
+        },
+
+        /**
+         * Maç içindeki round/phase bazlı event log'larını getirir.
+         * GET /api/admin/sessions/{id}/logs
+         * Beklenen response: [{ id, round, phase, eventType, message, highlight? }]
+         */
+        async fetchMatchLogs(id) {
+            this.matchLogsLoading = true
+            this.matchLogsError = null
+            try {
+                const { data } = await api.get(`/api/admin/sessions/${id}/logs`)
+                this.matchLogs = data ?? []
+                return data
+            } catch (err) {
+                this.matchLogsError = err?.response?.data?.message || 'Maç günlüğü yüklenemedi'
+                throw err
+            } finally {
+                this.matchLogsLoading = false
+            }
+        },
+
+        clearSelectedMatch() {
+            this.selectedMatch = null
+            this.matchPlayers = []
+            this.matchLogs = []
+            this.selectedMatchError = null
+            this.matchLogsError = null
         },
     },
 })

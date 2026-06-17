@@ -12,7 +12,7 @@ export default [
         meta: { requiresAuth: true, requiresAdmin: true },
     },
     {
-        path: '/admin/users/:id',
+        path: '/admin/users/:id',   
         name: 'admin-user-detail',
         component: () => import('./views/UserDetailView.vue'),
         meta: { requiresAuth: true, requiresAdmin: true },

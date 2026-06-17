@@ -3,16 +3,14 @@ import { useAuthStore } from '@/modules/auth/store'
 import homeRoutes from '@/modules/home/routes'
 import profileRoutes from '@/modules/profile/routes'
 import authRoutes from '@/modules/auth/routes'
-import staticRoutes from '@/modules/static/routes'  // ← ekle
-// import roomRoutes from '@/modules/room/routes'
-// import adminRoutes from '@/modules/admin/routes'
+import staticRoutes from '@/modules/static/routes'
+import adminRoutes from '@/modules/admin/routes'  
 
 const routes = [
   ...homeRoutes,
   ...authRoutes,
   ...profileRoutes,
-  // ...roomRoutes,
-  // ...adminRoutes,
+  ...adminRoutes,  
 
   {
     path: '/profile',
@@ -29,7 +27,7 @@ const routes = [
     component: { template: '<div></div>' },
   },
 
-  ...staticRoutes,  
+  ...staticRoutes,
 ]
 
 const router = createRouter({
@@ -40,12 +38,19 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
+
   if (to.meta.requiresAuth && !auth.token) {
     return next({ name: 'login', query: { redirect: to.fullPath } })
   }
+
   if (to.meta.guestOnly && auth.token) {
     return next('/')
   }
+
+  if (to.meta.requiresAdmin && !auth.user?.is_admin) {
+    return next('/')
+  }
+
   next()
 })
 
