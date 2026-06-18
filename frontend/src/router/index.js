@@ -4,13 +4,14 @@ import homeRoutes from '@/modules/home/routes'
 import profileRoutes from '@/modules/profile/routes'
 import authRoutes from '@/modules/auth/routes'
 import staticRoutes from '@/modules/static/routes'
-import adminRoutes from '@/modules/admin/routes'  
+import adminRoutes from '@/modules/admin/routes'
 
 const routes = [
   ...homeRoutes,
   ...authRoutes,
   ...profileRoutes,
-  ...adminRoutes,  
+  ...adminRoutes,
+  ...roomRoutes,
 
   {
     path: '/profile',

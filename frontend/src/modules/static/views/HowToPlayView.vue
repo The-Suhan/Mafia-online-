@@ -154,6 +154,9 @@ import {
     Search,
     User,
     Sparkles,
+    Target,    
+    Shield,    
+    Star,
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/modules/auth/store'
@@ -184,8 +187,7 @@ const roles = [
         name: 'Godfather',
         alignment: 'mafia',
         icon: Crosshair,
-        description:
-            "Leads the mafia and decides who to eliminate each night. Appears innocent to the Detective.",
+        description: 'Leads the mafia. Appears innocent to the Sheriff — the ultimate deception.',
     },
     {
         name: 'Mafioso',
@@ -200,10 +202,28 @@ const roles = [
         description: 'Protects one player each night, saving them from a mafia attack.',
     },
     {
-        name: 'Detective',
+        name: 'Sheriff',
         alignment: 'village',
         icon: Search,
         description: 'Investigates one player each night to learn whether they are mafia.',
+    },
+    {
+        name: 'Vigilante',
+        alignment: 'village',
+        icon: Target,
+        description: 'Can eliminate one suspected player during the night. Choose wisely.',
+    },
+    {
+        name: 'Bodyguard',
+        alignment: 'village',
+        icon: Shield,
+        description: 'Protects a player at night. Dies in their place if the mafia attacks.',
+    },
+    {
+        name: 'Mayor',
+        alignment: 'village',
+        icon: Star,
+        description: 'Has double voting power during day votes, but role is revealed publicly.',
     },
     {
         name: 'Villager',
