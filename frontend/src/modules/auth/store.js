@@ -45,9 +45,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   // ── Forgot Password ───────────────────────────────────────────────────────
   async function forgotPassword(payload) {
-    // payload: { email }
     const { data } = await api.post('/forgot-password', payload)
-    return data
+    return data   
   }
 
   // ── Reset Password ────────────────────────────────────────────────────────

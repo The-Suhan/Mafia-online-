@@ -5,6 +5,7 @@ import profileRoutes from '@/modules/profile/routes'
 import authRoutes from '@/modules/auth/routes'
 import staticRoutes from '@/modules/static/routes'
 import adminRoutes from '@/modules/admin/routes'
+import roomRoutes from '@/modules/room/routes'
 
 const routes = [
   ...homeRoutes,

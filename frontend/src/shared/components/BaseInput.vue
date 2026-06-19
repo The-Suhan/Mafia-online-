@@ -1,16 +1,16 @@
 <template>
-  <input
-    v-bind="$attrs"
-    :type="type"
-    :class="['base-input', { 'base-input--invalid': invalid }]"
-  />
+  <input v-bind="$attrs" :type="type" :value="modelValue" :class="['base-input', { 'base-input--invalid': invalid }]"
+    @input="$emit('update:modelValue', $event.target.value)" />
 </template>
 
 <script setup>
 defineProps({
-  type:    { type: String, default: 'text' },
+  type: { type: String, default: 'text' },
   invalid: { type: Boolean, default: false },
+  modelValue: { type: String, default: '' },
 })
+
+defineEmits(['update:modelValue'])
 </script>
 
 <style lang="scss" scoped>
