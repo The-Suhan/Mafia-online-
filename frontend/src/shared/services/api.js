@@ -6,7 +6,6 @@ const api = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-  withCredentials: true, // needed for Sanctum cookie-based auth
 })
 
 // Attach Bearer token from localStorage on every request
