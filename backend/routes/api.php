@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\RoomController;
 use Illuminate\Support\Facades\Route;
 
 // ─────────────────────────────────────────────
@@ -20,5 +21,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Diğer route'lar buraya eklenecek (room, game, profile vb.)
+    // Room & Game routes
+    Route::get('/rooms', [RoomController::class, 'index']);
+    Route::post('/rooms', [RoomController::class, 'store']);
+    Route::get('/rooms/{room}', [RoomController::class, 'show']);
+    Route::post('/rooms/{code}/join', [RoomController::class, 'joinByCode']);
+    Route::post('/rooms/{room}/start', [RoomController::class, 'startGame']);
+    Route::post('/rooms/{room}/close', [RoomController::class, 'closeRoom']);
+    Route::post('/rooms/{room}/leave', [RoomController::class, 'leaveRoom']);
+    Route::get('/rooms/{room}/session', [RoomController::class, 'getSession']);
+    Route::get('/sessions/{session}/players', [RoomController::class, 'getPlayers']);
+    Route::get('/rooms/{room}/messages', [RoomController::class, 'getMessages']);
+    Route::post('/rooms/{room}/messages', [RoomController::class, 'postMessage']);
 });

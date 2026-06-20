@@ -19,7 +19,7 @@
                 </span>
             </span>
             <span class="room-card__meta">
-                <span class="room-card__host">Host {{ room.host }}</span>
+                <span class="room-card__host">Host {{ room.owner?.nickname }}</span>
                 <span class="room-card__players">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -28,7 +28,7 @@
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
-                    {{ room.players }}/{{ room.max_players ?? room.maxPlayers }}
+                    {{ room.current_players }}/{{ room.max_players }}
                 </span>
             </span>
         </span>
@@ -56,7 +56,7 @@ const props = defineProps({
 const emit = defineEmits(['join'])
 
 const isPlaying = computed(() => props.room.status === 'playing')
-const isFull = computed(() => props.room.players >= (props.room.max_players ?? props.room.maxPlayers))
+const isFull = computed(() => props.room.current_players >= props.room.max_players)
 const disabled = computed(() => isPlaying.value || isFull.value)
 </script>
 

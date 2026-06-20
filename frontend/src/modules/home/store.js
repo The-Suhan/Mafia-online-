@@ -12,9 +12,9 @@ export const useHomeStore = defineStore('home', () => {
         error.value = null
         try {
             const { data } = await api.get('/rooms', { params: { status: 'waiting' } })
-            rooms.value = data
+            rooms.value = data.data
         } catch (e) {
-            error.value = e?.response?.data?.detail ?? 'Could not load rooms.'
+            error.value = e?.response?.data?.message ?? 'Could not load rooms.'
         } finally {
             loading.value = false
         }
@@ -22,12 +22,12 @@ export const useHomeStore = defineStore('home', () => {
 
     async function createRoom(payload) {
         const { data } = await api.post('/rooms', payload)
-        return data
+        return data.data
     }
 
     async function joinRoom(code) {
         const { data } = await api.post(`/rooms/${code}/join`)
-        return data
+        return data.data  
     }
 
     return { rooms, loading, error, fetchRooms, createRoom, joinRoom }

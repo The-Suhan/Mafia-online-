@@ -25,7 +25,7 @@ export const useRoomStore = defineStore('room', {
 
     isOwner: (state) => {
       const auth = useAuthStore()
-      return state.room?.owner_id === auth.user?.id
+      return state.room?.owner?.id === auth.user?.id
     },
 
     myPlayer: (state) => {
@@ -39,7 +39,7 @@ export const useRoomStore = defineStore('room', {
       this.loading = true
       try {
         const { data } = await api.get(`/rooms/${roomId}`)
-        this.room = data
+        this.room = data.data
       } finally {
         this.loading = false
       }
@@ -48,10 +48,10 @@ export const useRoomStore = defineStore('room', {
     async fetchSession(roomId) {
       try {
         const { data } = await api.get(`/rooms/${roomId}/session`)
-        this.session = data
-        if (data?.phase) this.currentPhase = data.phase
-        if (data?.round) this.round = data.round
-        if (data?.phase_ends_at) this.phaseEndsAt = data.phase_ends_at
+        this.session = data.data   // ✅
+        if (this.session?.phase) this.currentPhase = this.session.phase
+        if (this.session?.round_number) this.round = this.session.round_number
+        if (this.session?.phase_ends_at) this.phaseEndsAt = this.session.phase_ends_at
       } catch {
         this.session = null
       }
@@ -82,7 +82,11 @@ export const useRoomStore = defineStore('room', {
 
     async startGame(roomId) {
       const { data } = await api.post(`/rooms/${roomId}/start`)
-      return data
+      this.session = data.data  
+      this.currentPhase = this.session.phase
+      this.round = this.session.round_number
+      this.phaseEndsAt = this.session.phase_ends_at
+      return this.session
     },
 
     async closeRoom(roomId) {

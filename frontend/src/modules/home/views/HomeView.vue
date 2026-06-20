@@ -197,7 +197,7 @@ async function handleCreate() {
         createForm.value = { name: '', max_players: 6 }
         router.push(`/room/${room.id}`)
     } catch (e) {
-        createError.value = e?.response?.data?.detail ?? 'Could not create room.'
+        createError.value = e?.response?.data?.message ?? 'Could not create room.'
     } finally {
         creating.value = false
     }

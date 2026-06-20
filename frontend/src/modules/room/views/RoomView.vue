@@ -17,11 +17,7 @@
           <div class="room-view__code-pill">
             <span class="room-view__code-label">Room code</span>
             <span class="room-view__code-value">{{ store.room?.code ?? '——' }}</span>
-            <button
-              class="room-view__copy-btn"
-              :aria-label="copied ? 'Copied!' : 'Copy room code'"
-              @click="copyCode"
-            >
+            <button class="room-view__copy-btn" :aria-label="copied ? 'Copied!' : 'Copy room code'" @click="copyCode">
               {{ copied ? '✓' : '⎘' }}
             </button>
           </div>
@@ -43,11 +39,8 @@
           <span class="room-view__round-label">Round {{ store.round }}</span>
         </div>
         <div class="room-view__navbar-right">
-          <div
-            v-if="store.phaseEndsAt"
-            class="room-view__timer"
-            :class="{ 'room-view__timer--urgent': timerSeconds <= 10 }"
-          >
+          <div v-if="store.phaseEndsAt" class="room-view__timer"
+            :class="{ 'room-view__timer--urgent': timerSeconds <= 10 }">
             {{ formattedTimer }}
           </div>
         </div>
@@ -58,44 +51,22 @@
     <div class="room-view__body">
 
       <!-- Left: Player list -->
-      <PlayerList
-        :players="store.players"
-        :current-phase="store.currentPhase"
-        :my-role="store.myRole"
-        :my-mafia-team="store.myMafiaTeam"
-        :max-players="store.room?.max_players ?? 12"
-      />
+      <PlayerList :players="store.players" :current-phase="store.currentPhase" :my-role="store.myRole"
+        :my-mafia-team="store.myMafiaTeam" :max-players="store.room?.max_players ?? 12" />
 
       <!-- Right: Chat + action panels -->
       <div class="room-view__main">
-        <ChatBox
-          :messages="store.messages"
-          :phase="store.currentPhase"
-          :disabled="false"
-          @send="handleSendMessage"
-        />
+        <ChatBox :messages="store.messages" :phase="store.currentPhase" :disabled="false" @send="handleSendMessage" />
 
         <!-- Night action panel -->
-        <NightActionPanel
-          v-if="store.currentPhase === 'night' && store.session"
-          :my-role="store.myRole ?? 'villager'"
-          :alive-players="store.alivePlayers"
-          :my-mafia-team="store.myMafiaTeam"
-          :session-id="store.session.id"
-          :round="store.round"
-          @action-submitted="handleNightAction"
-        />
+        <NightActionPanel v-if="store.currentPhase === 'night' && store.session" :my-role="store.myRole ?? 'villager'"
+          :alive-players="store.alivePlayers" :my-mafia-team="store.myMafiaTeam" :session-id="store.session.id"
+          :round="store.round" @action-submitted="handleNightAction" />
 
         <!-- Day vote panel -->
-        <DayVotePanel
-          v-if="store.currentPhase === 'day_vote' && store.session"
-          :alive-players="store.alivePlayers"
-          :session-id="store.session.id"
-          :round="store.round"
-          :my-user-id="auth.user?.id"
-          :vote-counts="voteCounts"
-          @vote-submitted="handleVote"
-        />
+        <DayVotePanel v-if="store.currentPhase === 'day_vote' && store.session" :alive-players="store.alivePlayers"
+          :session-id="store.session.id" :round="store.round" :my-user-id="auth.user?.id" :vote-counts="voteCounts"
+          @vote-submitted="handleVote" />
 
         <!-- Lobby actions -->
         <div v-if="isWaiting" class="room-view__lobby-actions">
@@ -106,7 +77,8 @@
             <button class="room-view__btn room-view__btn--ghost" @click="settingsOpen = true">
               ⚙️ Settings
             </button>
-            <button class="room-view__btn room-view__btn--primary" :disabled="store.players.length < 4" @click="handleStartGame">
+            <button class="room-view__btn room-view__btn--primary" :disabled="store.players.length < 4"
+              @click="handleStartGame">
               ▶ Start Game
             </button>
           </template>
@@ -115,14 +87,8 @@
     </div>
 
     <!-- ── Phase Transition overlay ───────────────────────────────── -->
-    <PhaseTransition
-      :show="showTransition"
-      :phase="transitionPhase"
-      :role="store.myRole ?? 'villager'"
-      :winner="store.winner"
-      :night-duration="nightDuration"
-      @done="showTransition = false"
-    />
+    <PhaseTransition :show="showTransition" :phase="transitionPhase" :role="store.myRole ?? 'villager'"
+      :winner="store.winner" :night-duration="nightDuration" @done="showTransition = false" />
 
     <!-- ── Simple Settings modal (lobby only) ─────────────────────── -->
     <Teleport to="body">
@@ -508,7 +474,9 @@ onUnmounted(() => {
     border-radius: 4px;
     transition: color 0.15s;
 
-    &:hover { color: $color-foreground; }
+    &:hover {
+      color: $color-foreground;
+    }
   }
 
   &__player-pill {
@@ -523,8 +491,13 @@ onUnmounted(() => {
     font-weight: 600;
   }
 
-  &__player-count { font-variant-numeric: tabular-nums; }
-  &__player-max { color: $color-muted-foreground; }
+  &__player-count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__player-max {
+    color: $color-muted-foreground;
+  }
 
   &__phase-badge {
     padding: 4px 12px;
@@ -533,10 +506,25 @@ onUnmounted(() => {
     font-weight: 700;
     letter-spacing: 0.04em;
 
-    &--night { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
-    &--day_vote { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-    &--day_announcement { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
-    &--finished { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    &--night {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+    }
+
+    &--day_vote {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+    }
+
+    &--day_announcement {
+      background: rgba(251, 191, 36, 0.1);
+      color: #fbbf24;
+    }
+
+    &--finished {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+    }
   }
 
   &__round-label {
@@ -602,26 +590,38 @@ onUnmounted(() => {
     transition: opacity 0.15s, background 0.15s;
     border: 1px solid transparent;
 
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
 
     &--primary {
       background: $color-primary;
       color: $color-primary-foreground;
       border-color: $color-primary;
-      &:not(:disabled):hover { opacity: 0.85; }
+
+      &:not(:disabled):hover {
+        opacity: 0.85;
+      }
     }
 
     &--outline {
       background: transparent;
       border-color: $color-border;
       color: $color-foreground;
-      &:hover { background: $color-secondary; }
+
+      &:hover {
+        background: $color-secondary;
+      }
     }
 
     &--ghost {
       background: transparent;
       color: $color-foreground;
-      &:hover { background: $color-secondary; }
+
+      &:hover {
+        background: $color-secondary;
+      }
     }
   }
 
@@ -654,7 +654,10 @@ onUnmounted(() => {
     padding: 16px 20px;
     border-bottom: 1px solid $color-border;
 
-    h2 { margin: 0; font-size: 16px; }
+    h2 {
+      margin: 0;
+      font-size: 16px;
+    }
   }
 
   &__modal-close {
@@ -665,7 +668,10 @@ onUnmounted(() => {
     font-size: 16px;
     padding: 4px;
     line-height: 1;
-    &:hover { color: $color-foreground; }
+
+    &:hover {
+      color: $color-foreground;
+    }
   }
 
   &__modal-desc {
@@ -696,7 +702,9 @@ onUnmounted(() => {
     color: $color-foreground;
     cursor: default;
 
-    span:first-child { flex: 1; }
+    span:first-child {
+      flex: 1;
+    }
 
     input[type='range'] {
       flex: 1.5;
@@ -726,8 +734,15 @@ onUnmounted(() => {
       flex-direction: column;
       gap: 2px;
 
-      span { font-weight: 500; color: $color-foreground; }
-      small { font-size: 11px; color: $color-muted-foreground; }
+      span {
+        font-weight: 500;
+        color: $color-foreground;
+      }
+
+      small {
+        font-size: 11px;
+        color: $color-muted-foreground;
+      }
     }
 
     input[type='checkbox'] {
@@ -749,7 +764,14 @@ onUnmounted(() => {
 }
 
 @keyframes timerPulse {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 </style>
