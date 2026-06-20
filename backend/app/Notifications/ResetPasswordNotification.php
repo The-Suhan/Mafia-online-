@@ -10,18 +10,22 @@ class ResetPasswordNotification extends BaseResetPassword
     public function toMail($notifiable): MailMessage
     {
         $url = $this->resetUrl($notifiable);
+        $expireMinutes = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');
 
         return (new MailMessage)
-            ->subject('Reset Your Password')
-            ->line('You are receiving this email because we received a password reset request for your account.')
-            ->action('Reset Password', $url)
-            ->line('This password reset link will expire in '.config('auth.passwords.'.config('auth.defaults.passwords').'.expire').' minutes.')
-            ->line('If you did not request a password reset, no further action is required.');
+            ->subject('🎭 Reset Your Password — The Family Awaits')
+            ->greeting('A Message from the Don')
+            ->line('Word on the street is you forgot your password. Even the sharpest minds in the Family slip up sometimes.')
+            ->line('If this was you, click below to set a new password and get back to the table.')
+            ->action('Reset My Password', $url)
+            ->line("This link expires in {$expireMinutes} minutes — choose wisely. After that, you'll have to come asking again.")
+            ->line('If you didn\'t request this, sit tight. Nobody\'s coming for you — your secrets stay buried.')
+            ->salutation("Stay in the shadows,\nThe Mafia Team");
     }
 
     protected function resetUrl(mixed $notifiable): string
     {
-        return config('app.frontend_url')
+        return config('app.frontend_url', config('app.url'))
             .'/reset-password?token='
             .$this->token
             .'&email='
