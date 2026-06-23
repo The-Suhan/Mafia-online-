@@ -22,14 +22,10 @@
 
           <!-- Regular message -->
           <div v-else class="chat-box__message">
-            <img
-              :src="avatarUrl(msg.nickname)"
-              :alt="msg.nickname"
-              class="chat-box__avatar"
-            />
+            <img :src="avatarUrl(msg.user?.nickname ?? msg.nickname)" :alt="msg.nickname" class="chat-box__avatar" />
             <div class="chat-box__message-body">
               <div class="chat-box__message-meta">
-                <span class="chat-box__message-author">{{ msg.nickname }}</span>
+                <span class="chat-box__message-author">{{ msg.user?.nickname ?? msg.nickname }}</span>
                 <time class="chat-box__message-time">{{ formatTime(msg.created_at) }}</time>
               </div>
               <p class="chat-box__message-text">{{ msg.message }}</p>
@@ -50,23 +46,15 @@
 
     <!-- Input -->
     <form class="chat-box__form" @submit.prevent="handleSend">
-      <BaseInput
-        v-model="inputValue"
-        placeholder="Type a message…"
-        class="chat-box__input"
-        :disabled="disabled || phase === 'night'"
-        aria-label="Message"
-        @keydown.enter.exact.prevent="handleSend"
-        @keydown.shift.enter="() => {}"
-      />
-      <button
-        type="submit"
-        class="chat-box__send"
-        :disabled="!inputValue.trim() || disabled || phase === 'night'"
-        aria-label="Send message"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+      <BaseInput v-model="inputValue" placeholder="Type a message…" class="chat-box__input"
+        :disabled="disabled || phase === 'night'" aria-label="Message" @keydown.enter.exact.prevent="handleSend"
+        @keydown.shift.enter="() => { }" />
+      <button type="submit" class="chat-box__send" :disabled="!inputValue.trim() || disabled || phase === 'night'"
+        aria-label="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="m22 2-7 20-4-9-9-4Z" />
+          <path d="M22 2 11 13" />
         </svg>
       </button>
     </form>
@@ -153,8 +141,14 @@ watch(
     scrollbar-color: $color-border transparent;
     position: relative;
 
-    &::-webkit-scrollbar { width: 4px; }
-    &::-webkit-scrollbar-thumb { background: $color-border; border-radius: 4px; }
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $color-border;
+      border-radius: 4px;
+    }
   }
 
   &__messages-inner {
@@ -319,7 +313,14 @@ watch(
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
 }
 </style>

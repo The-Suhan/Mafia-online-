@@ -186,7 +186,7 @@ const settings = ref({
 
 const nightDuration = computed(() => settings.value.nightTime)
 
-// ── Computed ─────────────────────────────────────────────────────────────────
+// ── Computed ──────────────────────────────────────────────────────────────────
 const isWaiting = computed(() => store.currentPhase === 'waiting')
 
 const phaseLabel = computed(() => {
@@ -223,7 +223,7 @@ function startPhaseTimer() {
 
 watch(() => store.phaseEndsAt, startPhaseTimer)
 
-// ── Methods ──────────────────────────────────────────────────────────────────
+// ── Methods ───────────────────────────────────────────────────────────────────
 function copyCode() {
   navigator.clipboard?.writeText(store.room?.code ?? '')
   copied.value = true
@@ -234,7 +234,7 @@ async function handleSendMessage(text) {
   try {
     await store.sendMessage(roomId, text)
   } catch {
-    // Optimistic: message comes back via WebSocket
+    // mesaj WebSocket üzerinden zaten gelecek
   }
 }
 
@@ -271,7 +271,7 @@ function setupEcho() {
     enabledTransports: ['ws'],
   })
 
-  // 1. Presence channel
+  // 1. Presence channel — lobby oyuncu listesi
   echo
     .join(`room.${roomId}`)
     .here((users) => { store.players = users })
@@ -287,12 +287,12 @@ function setupEcho() {
       store.messages.push(e)
     })
 
-  // 2. Private game channel (only when session exists)
+  // 2. Session varsa game channel'ı kur
   if (store.session) {
     setupGameChannel()
   }
 
-  // 3. Private player channel
+  // 3. Private player channel — rol ve komiser sonucu
   echo
     .private(`player.${auth.user.id}`)
     .listen('.role.assigned', (e) => {
@@ -300,22 +300,29 @@ function setupEcho() {
       store.myMafiaTeam = e.mafia_team ?? []
       transitionPhase.value = 'role_assignment'
       showTransition.value = true
+
+      // Rol geldikten sonra session kanalını da kur (henüz kurulmadıysa)
+      if (store.session) {
+        setupGameChannel()
+      }
     })
     .listen('.sheriff.result', (e) => {
       store.messages.push({
         id: crypto.randomUUID(),
         user_id: null,
         type: 'system',
-        message: `🔍 Investigation result: ${e.target_nickname} is ${e.result === 'mafia' ? '⚠️ MAFIA' : '✅ not mafia'}`,
+        message: `🔍 Investigation result: ${e.target_nickname ?? 'target'} is ${e.result === 'mafia' ? '⚠️ MAFIA' : '✅ not mafia'}`,
         created_at: new Date().toISOString(),
       })
     })
 }
 
 function setupGameChannel() {
-  if (!store.session) return
+  if (!store.session || !echo) return
+
+  // ✅ DÜZELTİLDİ: game.X → session.X
   echo
-    .private(`game.${store.session.id}`)
+    .private(`session.${store.session.id}`)
     .listen('.phase.changed', (e) => {
       store.currentPhase = e.phase
       store.phaseEndsAt = e.phase_ends_at
@@ -338,7 +345,12 @@ function setupGameChannel() {
       if (p) p.is_alive = false
     })
     .listen('.vote.updated', (e) => {
-      voteCounts.value = e.votes ?? {}
+      // Backend { target_user_id, vote_count } gönderiyor
+      // voteCounts objesini güncelle
+      voteCounts.value = {
+        ...voteCounts.value,
+        [e.target_user_id]: e.vote_count,
+      }
     })
     .listen('.game.ended', (e) => {
       store.winner = e.winner
@@ -353,9 +365,11 @@ function teardownEcho() {
   echo.leave(`room.${roomId}`)
   echo.leave(`player.${auth.user.id}`)
   if (store.session) {
-    echo.leave(`game.${store.session.id}`)
+    // ✅ DÜZELTİLDİ: game.X → session.X
+    echo.leave(`session.${store.session.id}`)
   }
   echo.disconnect()
+  echo = null
 }
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
@@ -369,8 +383,6 @@ onMounted(async () => {
   }
   startPhaseTimer()
   setupEcho()
-  // Setup game channel after session loads
-  if (store.session) setupGameChannel()
 })
 
 onUnmounted(() => {

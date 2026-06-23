@@ -10,6 +10,7 @@ use App\Models\ChatMessage;
 use App\Models\GamePlayer;
 use App\Models\GameSession;
 use App\Models\Room;
+use App\Services\GameEngine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -80,7 +81,7 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        $room->load(['owner', 'activeSession']);
+        $room->load(['owner', 'activeSession', 'players']);
 
         return new RoomResource($room);
     }
@@ -154,7 +155,7 @@ class RoomController extends Controller
 
             $room->update(['status' => 'playing']);
 
-            // TODO: GameEngine::assignRoles($session)
+            app(GameEngine::class)->assignRoles($session);
 
             return $session;
         });
@@ -239,6 +240,8 @@ class RoomController extends Controller
 
         return $players->map(fn (GamePlayer $player) => [
             'id' => $player->id,
+            'user_id' => $player->user_id,
+            'nickname' => $player->user?->nickname,
             'user' => new UserResource($player->user),
             'role' => $player->role,
             'is_alive' => $player->is_alive,

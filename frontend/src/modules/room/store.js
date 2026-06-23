@@ -40,6 +40,9 @@ export const useRoomStore = defineStore('room', {
       try {
         const { data } = await api.get(`/rooms/${roomId}`)
         this.room = data.data
+        if (this.room?.players) {
+          this.players = this.room.players
+        }
       } finally {
         this.loading = false
       }
@@ -82,7 +85,7 @@ export const useRoomStore = defineStore('room', {
 
     async startGame(roomId) {
       const { data } = await api.post(`/rooms/${roomId}/start`)
-      this.session = data.data  
+      this.session = data.data
       this.currentPhase = this.session.phase
       this.round = this.session.round_number
       this.phaseEndsAt = this.session.phase_ends_at

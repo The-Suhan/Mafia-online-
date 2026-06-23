@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\RoomController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sessions/{session}/players', [RoomController::class, 'getPlayers']);
     Route::get('/rooms/{room}/messages', [RoomController::class, 'getMessages']);
     Route::post('/rooms/{room}/messages', [RoomController::class, 'postMessage']);
+    Route::post('/game/{session}/night-action', [GameController::class, 'nightAction']);
+    Route::post('/game/{session}/vote', [GameController::class, 'vote']);
 });

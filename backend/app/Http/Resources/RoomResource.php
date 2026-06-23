@@ -18,6 +18,7 @@ class RoomResource extends JsonResource
             'name' => $this->name,
             'owner' => new UserResource($this->whenLoaded('owner')),
             'max_players' => $this->max_players,
+            'players' => UserResource::collection($this->whenLoaded('players')),
             'current_players' => $this->current_players,
             'status' => $this->status,
             'settings' => $this->settings,
