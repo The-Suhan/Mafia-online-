@@ -98,6 +98,24 @@ class User extends Authenticatable
         };
     }
 
+    /**
+     * Return the XP threshold for the next rank above the user's current XP.
+     * Used by AdminController::userDetail for `xp_to_next_level`.
+     * Falls back to xp + 1000 if already at the top rank.
+     */
+    public static function nextRankThreshold(int $xp): int
+    {
+        $thresholds = [200, 500, 1200, 2500, 5000];
+
+        foreach ($thresholds as $threshold) {
+            if ($xp < $threshold) {
+                return $threshold;
+            }
+        }
+
+        return $xp + 1000;
+    }
+
     // ─────────────────────────────────────────────
     //  Password Reset — custom notification
     // ─────────────────────────────────────────────

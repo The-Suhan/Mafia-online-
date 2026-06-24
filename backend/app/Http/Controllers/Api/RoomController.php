@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\ChatMessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GameSessionResource;
 use App\Http\Resources\RoomResource;
@@ -301,7 +302,7 @@ class RoomController extends Controller
 
         $message->load('user');
 
-        // TODO: broadcast(new ChatMessageSent($message))
+        broadcast(new ChatMessageSent($message))->toOthers();
 
         return response()->json($this->formatMessage($message), 201);
     }
@@ -315,6 +316,7 @@ class RoomController extends Controller
             'id' => $message->id,
             'room_id' => $message->room_id,
             'session_id' => $message->session_id,
+            'user_id' => $message->user_id,
             'user' => $message->user ? new UserResource($message->user) : null,
             'message' => $message->message,
             'type' => $message->type,

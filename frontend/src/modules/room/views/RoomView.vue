@@ -365,7 +365,6 @@ function teardownEcho() {
   echo.leave(`room.${roomId}`)
   echo.leave(`player.${auth.user.id}`)
   if (store.session) {
-    // ✅ DÜZELTİLDİ: game.X → session.X
     echo.leave(`session.${store.session.id}`)
   }
   echo.disconnect()

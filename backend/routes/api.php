@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\RoomController;
@@ -36,4 +37,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/rooms/{room}/messages', [RoomController::class, 'postMessage']);
     Route::post('/game/{session}/night-action', [GameController::class, 'nightAction']);
     Route::post('/game/{session}/vote', [GameController::class, 'vote']);
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/stats', [AdminController::class, 'stats']);
+    Route::get('/activity', [AdminController::class, 'activity']);
+
+    Route::get('/users', [AdminController::class, 'users']);
+    Route::get('/users/{id}', [AdminController::class, 'userDetail']);
+    Route::get('/users/{id}/games', [AdminController::class, 'userGames']);
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+    Route::patch('/users/{id}/xp', [AdminController::class, 'updateXp']);
+    Route::patch('/users/{id}/role', [AdminController::class, 'updateRole']);
+
+    Route::get('/sessions', [AdminController::class, 'sessions']);
+    Route::get('/sessions/{id}', [AdminController::class, 'sessionDetail']);
+    Route::get('/sessions/{id}/logs', [AdminController::class, 'sessionLogs']);
 });

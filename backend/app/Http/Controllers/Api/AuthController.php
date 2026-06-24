@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -31,13 +30,13 @@ class AuthController extends Controller
                 'unique:users',
                 'regex:/^[a-zA-Z0-9_]+$/',
             ],
-            'email'    => 'required|email|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
             'nickname' => $request->nickname,
-            'email'    => $request->email,
+            'email' => $request->email,
             'password' => $request->password, // cast: hashed
         ]);
 
@@ -45,7 +44,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user'  => new UserResource($user),
+            'user' => new UserResource($user),
         ], 201);
     }
 
@@ -56,7 +55,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -77,7 +76,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user'  => new UserResource($user),
+            'user' => new UserResource($user),
         ]);
     }
 
@@ -121,8 +120,8 @@ class AuthController extends Controller
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
+            'token' => 'required',
+            'email' => 'required|email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -130,7 +129,7 @@ class AuthController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user, string $password) {
                 $user->forceFill([
-                    'password'       => $password, // cast: hashed
+                    'password' => $password, // cast: hashed
                     'remember_token' => Str::random(60),
                 ])->save();
 
