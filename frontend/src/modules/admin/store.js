@@ -71,7 +71,7 @@ export const useAdminStore = defineStore('admin', {
             this.loading = true
             this.error = null
             try {
-                const { data } = await api.get('/api/admin/stats')
+                const { data } = await api.get('/admin/stats')
                 this.stats = data
             } catch (err) {
                 this.error = err?.response?.data?.message || 'Failed to load stats'
@@ -84,7 +84,7 @@ export const useAdminStore = defineStore('admin', {
             this.loading = true
             this.error = null
             try {
-                const { data } = await api.get('/api/admin/activity', { params: { limit: 10 } })
+                const { data } = await api.get('/admin/activity', { params: { limit: 10 } })
                 this.activity = data
             } catch (err) {
                 this.error = err?.response?.data?.message || 'Failed to load activity'
@@ -94,14 +94,14 @@ export const useAdminStore = defineStore('admin', {
         },
 
         /**
-         * GET /api/admin/users?page=&search=&rank=
+         * GET /admin/users?page=&search=&rank=
          * @param {{page?: number, search?: string, rank?: string}} payload
          */
         async fetchUsers({ page = 1, search = '', rank = '' } = {}) {
             this.loading = true
             this.error = null
             try {
-                const { data } = await api.get('/api/admin/users', {
+                const { data } = await api.get('/admin/users', {
                     params: {
                         page,
                         search: search || undefined,
@@ -126,7 +126,7 @@ export const useAdminStore = defineStore('admin', {
             this.selectedUserLoading = true
             this.selectedUserError = null
             try {
-                const { data } = await api.get(`/api/admin/users/${id}`)
+                const { data } = await api.get(`/admin/users/${id}`)
                 this.selectedUser = data
                 return data
             } catch (err) {
@@ -141,7 +141,7 @@ export const useAdminStore = defineStore('admin', {
             this.selectedUserGamesLoading = true
             this.selectedUserGamesError = null
             try {
-                const { data } = await api.get(`/api/admin/users/${id}/games`, {
+                const { data } = await api.get(`/admin/users/${id}/games`, {
                     params: { limit },
                 })
                 this.selectedUserGames = data
@@ -156,7 +156,7 @@ export const useAdminStore = defineStore('admin', {
 
         /**
          * Kullanıcıyı kalıcı olarak siler.
-         * DELETE /api/admin/users/{id}
+         * DELETE /admin/users/{id}
          *
          * Liste sayfasındaysak kullanıcıyı listeden düşürür.
          * Detay sayfasındaysak selectedUser'ı temizler (sayfa artık
@@ -166,7 +166,7 @@ export const useAdminStore = defineStore('admin', {
         async deleteUser(id) {
             this.deleteActionLoading = true
             try {
-                const { data } = await api.delete(`/api/admin/users/${id}`)
+                const { data } = await api.delete(`/admin/users/${id}`)
 
                 this.users = this.users.filter((u) => u.id !== id)
                 this.usersTotal = Math.max(0, this.usersTotal - 1)
@@ -187,7 +187,7 @@ export const useAdminStore = defineStore('admin', {
         async updateUserXp(id, xp) {
             this.xpActionLoading = true
             try {
-                const { data } = await api.patch(`/api/admin/users/${id}/xp`, { xp })
+                const { data } = await api.patch(`/admin/users/${id}/xp`, { xp })
                 if (this.selectedUser && String(this.selectedUser.id) === String(id)) {
                     this.selectedUser = { ...this.selectedUser, ...data }
                 }
@@ -199,7 +199,7 @@ export const useAdminStore = defineStore('admin', {
 
         // BONUS: is_admin toggle arayüzü için — endpoint adını teyit edin.
         async setUserAdmin(id, isAdmin) {
-            const { data } = await api.patch(`/api/admin/users/${id}/role`, {
+            const { data } = await api.patch(`/admin/users/${id}/role`, {
                 is_admin: isAdmin,
             })
             if (this.selectedUser && String(this.selectedUser.id) === String(id)) {
@@ -217,14 +217,14 @@ export const useAdminStore = defineStore('admin', {
 
         /**
          * Maç geçmişini sayfalı olarak getirir.
-         * GET /api/admin/sessions?page=&status=&date_from=&date_to=
+         * GET /admin/sessions?page=&status=&date_from=&date_to=
          * @param {{page?: number, status?: string, dateFrom?: string, dateTo?: string}} payload
          */
         async fetchMatches({ page = 1, status = 'all', dateFrom = '', dateTo = '' } = {}) {
             this.matchesLoading = true
             this.matchesError = null
             try {
-                const { data } = await api.get('/api/admin/sessions', {
+                const { data } = await api.get('/admin/sessions', {
                     params: {
                         page,
                         status: status && status !== 'all' ? status : undefined,
@@ -245,13 +245,13 @@ export const useAdminStore = defineStore('admin', {
 
         /**
          * Maç detayını getirir (admin/history-match/:id sayfası).
-         * GET /api/admin/sessions/{id}
+         * GET /admin/sessions/{id}
          */
         async fetchMatch(id) {
             this.selectedMatchLoading = true
             this.selectedMatchError = null
             try {
-                const { data } = await api.get(`/api/admin/sessions/${id}`)
+                const { data } = await api.get(`/admin/sessions/${id}`)
                 this.selectedMatch = data
                 this.matchPlayers = data?.players ?? []
                 return data
@@ -265,13 +265,13 @@ export const useAdminStore = defineStore('admin', {
 
         /**
          * Maç içindeki round/phase bazlı event log'larını getirir.
-         * GET /api/admin/sessions/{id}/logs
+         * GET /admin/sessions/{id}/logs
          */
         async fetchMatchLogs(id) {
             this.matchLogsLoading = true
             this.matchLogsError = null
             try {
-                const { data } = await api.get(`/api/admin/sessions/${id}/logs`)
+                const { data } = await api.get(`/admin/sessions/${id}/logs`)
                 this.matchLogs = data ?? []
                 return data
             } catch (err) {

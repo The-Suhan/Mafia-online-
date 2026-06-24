@@ -283,7 +283,7 @@ async function deleteUser(u) {
         flex-direction: column;
         gap: 12px;
 
-        @include respond-to(sm) {
+        @include breakpoint('sm') {
             flex-direction: row;
             align-items: center;
         }
@@ -320,7 +320,7 @@ async function deleteUser(u) {
         padding: 0 10px;
         font-size: 13px;
 
-        @include respond-to(sm) {
+        @include breakpoint('sm') {
             width: 192px;
         }
 
@@ -529,7 +529,7 @@ async function deleteUser(u) {
         padding: 12px 16px;
         border-top: 1px solid $color-border;
 
-        @include respond-to(sm) {
+        @include breakpoint('sm') {
             flex-direction: row;
             align-items: center;
             justify-content: space-between;

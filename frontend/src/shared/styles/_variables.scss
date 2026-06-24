@@ -44,6 +44,11 @@ $transition-colors: color 150ms ease, background-color 150ms ease, border-color 
 $color-background: $color-bg;
 $color-background-raw: 30, 30, 36;
 $color-foreground: $color-fg;
+$color-primary-raw: (
+    192,
+    57,
+    43
+);
 $color-muted-foreground: $color-muted-fg;
 $color-primary-foreground: $color-primary-fg;
 $color-accent-foreground: $color-accent-fg;
@@ -52,3 +57,6 @@ $color-background-fade: rgba(#1e1e24, 0.9);
 $color-text: $color-fg;
 $color-text-muted: $color-muted-fg;
 $color-muted: $color-secondary;
+$color-success: #34d399;
+$color-warning: #fbbf24;
+$color-danger: $color-destructive;
