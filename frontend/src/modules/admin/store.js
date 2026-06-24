@@ -29,7 +29,7 @@ export const useAdminStore = defineStore('admin', {
         selectedUserGamesError: null,
 
         // --- Aksiyon durumları (UI'da spinner/disable göstermek için) ---
-        banActionLoading: false,
+        deleteActionLoading: false,
         xpActionLoading: false,
 
         // --- Match History (liste sayfası) ---
@@ -122,8 +122,6 @@ export const useAdminStore = defineStore('admin', {
         },
 
         // --- Detay sayfası ---
-        // NOT: Bu action gerçek dosyada yoktu, önceki tahmini sürümden taşındı.
-        // Endpoint'i backend'inize göre teyit edin.
         async fetchUser(id) {
             this.selectedUserLoading = true
             this.selectedUserError = null
@@ -139,7 +137,6 @@ export const useAdminStore = defineStore('admin', {
             }
         },
 
-        // NOT: Tahmini eklendi, endpoint'i teyit edin.
         async fetchUserGames(id, limit = 10) {
             this.selectedUserGamesLoading = true
             this.selectedUserGamesError = null
@@ -158,34 +155,35 @@ export const useAdminStore = defineStore('admin', {
         },
 
         /**
-         * Hem liste sayfasının ihtiyacını (kullanıcıyı listeden çıkar)
-         * hem de detay sayfasının ihtiyacını (selectedUser'ı güncelle)
-         * tek action'da karşılar. Endpoint, gerçek dosyadaki gibi POST.
+         * Kullanıcıyı kalıcı olarak siler.
+         * DELETE /api/admin/users/{id}
+         *
+         * Liste sayfasındaysak kullanıcıyı listeden düşürür.
+         * Detay sayfasındaysak selectedUser'ı temizler (sayfa artık
+         * geçersiz bir kullanıcıya bakıyor demektir — view bunu
+         * router.push ile yönlendirip ele almalı).
          */
-        async banUser(id) {
-            this.banActionLoading = true
+        async deleteUser(id) {
+            this.deleteActionLoading = true
             try {
-                const { data } = await api.post(`/api/admin/users/${id}/ban`)
+                const { data } = await api.delete(`/api/admin/users/${id}`)
 
-                // Liste sayfasındaysak: kullanıcıyı listeden düşür
                 this.users = this.users.filter((u) => u.id !== id)
                 this.usersTotal = Math.max(0, this.usersTotal - 1)
 
-                // Detay sayfasındaysak: selectedUser'ı güncelle
                 if (this.selectedUser && String(this.selectedUser.id) === String(id)) {
-                    this.selectedUser = { ...this.selectedUser, ...data }
+                    this.selectedUser = null
                 }
 
                 return data
             } catch (err) {
-                this.error = err?.response?.data?.message || 'Failed to ban user'
+                this.error = err?.response?.data?.message || 'Failed to delete user'
                 throw err
             } finally {
-                this.banActionLoading = false
+                this.deleteActionLoading = false
             }
         },
 
-        // NOT: Tahmini eklendi, gerçek endpoint'i teyit edin.
         async updateUserXp(id, xp) {
             this.xpActionLoading = true
             try {
@@ -235,8 +233,6 @@ export const useAdminStore = defineStore('admin', {
                     },
                 })
 
-                // Farklı API response şekillerine tolerans:
-                // { items, total, page } veya { data, meta: { total, current_page } }
                 this.matches = data.items ?? data.data ?? []
                 this.matchesTotal = data.total ?? data.meta?.total ?? 0
                 this.matchesPage = data.page ?? data.meta?.current_page ?? page
@@ -250,8 +246,6 @@ export const useAdminStore = defineStore('admin', {
         /**
          * Maç detayını getirir (admin/history-match/:id sayfası).
          * GET /api/admin/sessions/{id}
-         * Beklenen response: { id, roomName, winner, totalPlayers, totalRounds,
-         *   duration, startedAt, endedAt, players: [...] }
          */
         async fetchMatch(id) {
             this.selectedMatchLoading = true
@@ -272,7 +266,6 @@ export const useAdminStore = defineStore('admin', {
         /**
          * Maç içindeki round/phase bazlı event log'larını getirir.
          * GET /api/admin/sessions/{id}/logs
-         * Beklenen response: [{ id, round, phase, eventType, message, highlight? }]
          */
         async fetchMatchLogs(id) {
             this.matchLogsLoading = true

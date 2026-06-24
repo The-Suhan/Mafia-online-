@@ -55,8 +55,6 @@
                                     <span class="admin-user-detail__status-dot" aria-hidden="true" />
                                     {{ user.is_online ? 'Çevrimiçi' : 'Çevrimdışı' }}
                                 </span>
-
-                                <span v-if="user.is_banned" class="admin-user-detail__ban-pill">Banlı</span>
                             </div>
 
                             <p class="admin-user-detail__email">
@@ -180,14 +178,16 @@
                 <section class="admin-user-detail__card admin-user-detail__actions" aria-label="Admin aksiyonları">
                     <span class="admin-user-detail__actions-label">Admin işlemleri</span>
                     <div class="admin-user-detail__actions-buttons">
-                        <BaseButton variant="danger" :loading="banning" :disabled="banning"
-                            class="admin-user-detail__ban-btn" @click="handleBanUser">
+                        <BaseButton variant="danger" :loading="deleting" :disabled="deleting"
+                            class="admin-user-detail__delete-btn" @click="handleDeleteUser">
                             <svg viewBox="0 0 24 24" class="admin-user-detail__icon admin-user-detail__icon--sm"
                                 aria-hidden="true">
-                                <circle cx="12" cy="12" r="9" />
-                                <path d="M6 6l12 12" />
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M10 11v6M14 11v6" />
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                             </svg>
-                            {{ user.is_banned ? 'Banı Kaldır' : 'Kullanıcıyı Banla' }}
+                            Kullanıcıyı Sil
                         </BaseButton>
 
                         <BaseButton variant="secondary" @click="openXpModal">
@@ -282,13 +282,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAdminStore } from '../store'
 import AdminLayout from '../components/AdminLayout.vue'
 import BaseButton from '@/shared/components/BaseButton.vue'
 import BaseInput from '@/shared/components/BaseInput.vue'
 
 const route = useRoute()
+const router = useRouter()
 const adminStore = useAdminStore()
 
 const userId = computed(() => route.params.id)
@@ -322,28 +323,27 @@ async function loadData() {
 
 onMounted(loadData)
 
-// --- Ban user ---
-const banning = ref(false)
-async function handleBanUser() {
+// --- Delete user ---
+const deleting = ref(false)
+async function handleDeleteUser() {
     if (!user.value) return
-    const confirmMessage = user.value.is_banned
-        ? `${user.value.nickname} kullanıcısının banını kaldırmak istediğinize emin misiniz?`
-        : `${user.value.nickname} kullanıcısını banlamak istediğinize emin misiniz?`
+    const confirmMessage = `${user.value.nickname} kullanıcısını kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`
     // eslint-disable-next-line no-alert
     if (!window.confirm(confirmMessage)) return
 
-    banning.value = true
+    deleting.value = true
     try {
-        await adminStore.banUser(userId.value)
+        await adminStore.deleteUser(userId.value)
+        router.push('/admin/users')
     } catch (err) {
         // eslint-disable-next-line no-alert
-        window.alert('Ban işlemi başarısız oldu.')
+        window.alert(err?.response?.data?.message || 'Kullanıcı silinemedi.')
     } finally {
-        banning.value = false
+        deleting.value = false
     }
 }
 
-// --- Admin toggle (bonus — bkz. store.js notu) ---
+// --- Admin toggle ---
 const adminToggleLoading = ref(false)
 async function handleToggleAdmin() {
     if (!user.value) return
@@ -432,15 +432,6 @@ function formatRelative(value) {
 </script>
 
 <style lang="scss" scoped>
-/*
- * Renk/spacing değerleri burada bilinçli olarak literal (hex/px) verildi —
- * projenizdeki _variables.scss / _mixins.scss dosyalarının gerçek değişken
- * adlarını bilmediğim için varsayımsal isimlerle @use etmek derleme hatası
- * riski taşıyordu. Tasarım, mevcut globals.css'teki koyu tema paletinin
- * (oklch) yaklaşık hex karşılıklarından türetildi. Karşılık gelen tokenlarınız
- * varsa bu literalleri onlarla değiştirmeniz önerilir.
- */
-
 $color-bg: #1c1c1e;
 $color-card: #232325;
 $color-foreground: #f4f4f5;
@@ -650,17 +641,6 @@ $space-6: 24px;
         background: $color-emerald;
     }
 
-    &__ban-pill {
-        border-radius: 999px;
-        background: rgba($color-primary, 0.2);
-        color: $color-primary;
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        padding: 3px $space-2;
-    }
-
     &__email {
         display: flex;
         align-items: center;
@@ -862,7 +842,7 @@ $space-6: 24px;
         gap: $space-3;
     }
 
-    &__ban-btn {
+    &__delete-btn {
         box-shadow: 0 0 0 1px rgba($color-primary, 0.15), 0 0 16px rgba($color-primary, 0.25);
     }
 

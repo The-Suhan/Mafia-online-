@@ -96,10 +96,13 @@
                                         </router-link>
                                         <button type="button"
                                             class="admin-users__icon-btn admin-users__icon-btn--danger"
-                                            :aria-label="`${u.nickname} banla`" @click="banUser(u)">
+                                            :disabled="deletingId === u.id" :aria-label="`${u.nickname} sil`"
+                                            @click="deleteUser(u)">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10" />
-                                                <line x1="4.9" y1="4.9" x2="19.1" y2="19.1" />
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                                <path d="M10 11v6M14 11v6" />
+                                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                                             </svg>
                                         </button>
                                     </div>
@@ -133,7 +136,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { useStore } from 'vuex'
+import { useAdminStore } from '../store'
 import AdminLayout from '../components/AdminLayout.vue'
 import BaseInput from '@/shared/components/BaseInput.vue'
 import BaseButton from '@/shared/components/BaseButton.vue'
@@ -141,22 +144,23 @@ import BaseButton from '@/shared/components/BaseButton.vue'
 const PAGE_SIZE = 20
 const RANKS = ['Rookie', 'Novice', 'Elite', 'Pro', 'Master', 'Legend']
 
-const store = useStore()
+const adminStore = useAdminStore()
 
 const search = ref('')
 const rankFilter = ref('')
+const deletingId = ref(null)
 
-const users = computed(() => store.state.admin.users)
-const usersTotal = computed(() => store.state.admin.usersTotal)
-const usersPage = computed(() => store.state.admin.usersPage)
-const usersLoading = computed(() => store.state.admin.usersLoading)
+const users = computed(() => adminStore.users)
+const usersTotal = computed(() => adminStore.usersTotal)
+const usersPage = computed(() => adminStore.usersPage)
+const usersLoading = computed(() => adminStore.loading)
 
 const totalPages = computed(() =>
     Math.max(1, Math.ceil(usersTotal.value / PAGE_SIZE)),
 )
 
 function loadUsers(page = 1) {
-    store.dispatch('admin/fetchUsers', {
+    adminStore.fetchUsers({
         page,
         search: search.value.trim(),
         rank: rankFilter.value,
@@ -218,9 +222,18 @@ function onAvatarError(event, u) {
     event.target.src = dicebearUrl(u.nickname)
 }
 
-function banUser(u) {
-    if (confirm(`${u.nickname} kullanıcısını banlamak istediğinize emin misiniz?`)) {
-        store.dispatch('admin/banUser', u.id)
+async function deleteUser(u) {
+    if (!confirm(`${u.nickname} kullanıcısını kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
+        return
+    }
+    deletingId.value = u.id
+    try {
+        await adminStore.deleteUser(u.id)
+    } catch (err) {
+        // eslint-disable-next-line no-alert
+        window.alert(err?.response?.data?.message || 'Kullanıcı silinemedi.')
+    } finally {
+        deletingId.value = null
     }
 }
 </script>
@@ -496,6 +509,11 @@ function banUser(u) {
         &:hover {
             color: $color-text;
             background: rgba(255, 255, 255, 0.06);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         &--danger:hover {
