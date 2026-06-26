@@ -266,12 +266,12 @@ async function deleteUser(u) {
     &__subtitle {
         margin: 4px 0 0;
         font-size: 13px;
-        color: $color-muted;
+        color: $color-text-muted;
     }
 
     &__total {
         font-size: 13px;
-        color: $color-muted;
+        color: $color-text-muted;
 
         strong {
             color: $color-text;
@@ -349,7 +349,7 @@ async function deleteUser(u) {
         th {
             text-align: left;
             padding: 10px 12px;
-            font-weight: 500;
+            font-weight: 600;
             color: $color-text;
             border-bottom: 1px solid $color-border;
             white-space: nowrap;
@@ -359,6 +359,7 @@ async function deleteUser(u) {
             padding: 8px 12px;
             vertical-align: middle;
             white-space: nowrap;
+            color: $color-text;
             border-bottom: 1px solid $color-border;
         }
 
@@ -405,7 +406,7 @@ async function deleteUser(u) {
     }
 
     &__muted {
-        color: $color-muted;
+        color: $color-text-muted;
     }
 
     &__mono {
@@ -497,7 +498,7 @@ async function deleteUser(u) {
         border-radius: 8px;
         border: none;
         background: transparent;
-        color: $color-muted;
+        color: $color-text-muted;
         cursor: pointer;
         transition: background-color 0.15s ease, color 0.15s ease;
 
@@ -539,7 +540,7 @@ async function deleteUser(u) {
     &__pagination-info {
         margin: 0;
         font-size: 13px;
-        color: $color-muted;
+        color: $color-text-muted;
 
         strong {
             color: $color-text;

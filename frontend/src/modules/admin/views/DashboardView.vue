@@ -335,8 +335,7 @@ const statsCards = computed(() => {
         transition: border-color 0.2s, box-shadow 0.2s;
 
         &:hover {
-            border-color: $color-primary;
-            box-shadow: 0 0 0 1px rgba($color-primary-raw..., 0.25), 0 4px 20px rgba($color-primary-raw..., 0.1);
+            box-shadow: 0 0 0 1px rgba(192, 57, 43, 0.25), 0 4px 20px rgba(192, 57, 43, 0.1);
         }
     }
 
@@ -359,7 +358,7 @@ const statsCards = computed(() => {
         width: 40px;
         height: 40px;
         border-radius: 8px;
-        background-color: rgba($color-primary-raw..., 0.1);
+        background-color: rgba(192, 57, 43, 0.1);
         color: $color-primary;
     }
 
@@ -488,7 +487,7 @@ const statsCards = computed(() => {
         }
 
         &--game_started {
-            background-color: rgba($color-primary-raw..., 0.1);
+            background-color: rgba(192, 57, 43, 0.1);
             color: $color-primary;
         }
 

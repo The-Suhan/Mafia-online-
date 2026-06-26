@@ -165,7 +165,7 @@ const authStore = useAuthStore()
         }
 
         &--active {
-            background-color: rgba($color-primary-raw..., 0.12);
+            background-color: rgba(192, 57, 43, 0.12);
             color: $color-primary;
         }
     }
