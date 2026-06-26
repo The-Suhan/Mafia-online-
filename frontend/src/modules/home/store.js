@@ -27,8 +27,13 @@ export const useHomeStore = defineStore('home', () => {
 
     async function joinRoom(code) {
         const { data } = await api.post(`/rooms/${code}/join`)
-        return data.data  
+        return data.data
     }
 
     return { rooms, loading, error, fetchRooms, createRoom, joinRoom }
+}, {
+    persist: {
+        key: 'home',
+        paths: ['rooms'],
+    }
 })

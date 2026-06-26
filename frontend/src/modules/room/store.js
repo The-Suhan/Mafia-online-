@@ -114,4 +114,8 @@ export const useRoomStore = defineStore('room', {
       this.dayVote = { submitted: false, target_id: null }
     },
   },
+  persist: {
+    key: 'room',
+    paths: ['room', 'session', 'players', 'currentPhase', 'round', 'winner'],
+  },
 })

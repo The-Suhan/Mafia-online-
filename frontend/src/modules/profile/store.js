@@ -131,4 +131,8 @@ export const useProfileStore = defineStore('profile', {
             return data
         },
     },
+    persist: {
+        key: 'profile',
+        paths: ['profile', 'recentGames'],
+    },
 })

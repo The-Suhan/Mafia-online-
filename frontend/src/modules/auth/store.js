@@ -34,19 +34,19 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     try {
       await api.post('/logout')
-    } catch {
-      // swallow — clear local state regardless
-    } finally {
+    } catch { } finally {
       token.value = null
       user.value = null
       localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth')
+      localStorage.removeItem('profile')
     }
   }
 
   // ── Forgot Password ───────────────────────────────────────────────────────
   async function forgotPassword(payload) {
     const { data } = await api.post('/forgot-password', payload)
-    return data   
+    return data
   }
 
   // ── Reset Password ────────────────────────────────────────────────────────
@@ -57,4 +57,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return { user, token, register, login, logout, forgotPassword, resetPassword }
+}, {
+  persist: {
+    key: 'auth',
+    paths: ['user', 'token'],
+  }
 })
